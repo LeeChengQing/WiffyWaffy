@@ -43,7 +43,7 @@
 
   function renderTop() {
     header.innerHTML =
-      '<div class="brand"><div class="brand-mark" aria-hidden="true">🧇</div>' +
+      '<div class="brand"><div class="brand-mark" aria-hidden="true"><span class="brand-emoji">🧇</span></div>' +
         '<div class="brand-copy"><span class="eyebrow">FRESHLY MADE</span><h1>Wiffy Waffy</h1>' +
         '<p>Happiness in every bite!</p></div></div>' +
       '<div class="language-picker" role="group" aria-label="Choose language">' +
