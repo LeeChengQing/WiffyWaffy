@@ -60,7 +60,8 @@ button, a { min-height: 44px; }
   min-width:52px; min-height:33px; border:0; border-radius:19px;
   background:transparent; color:var(--ink); font-size:13px; font-weight:700;
 }
-.lang-option.active { color:white; background:var(--blue); }
+.lang-option.active { color:white; background:transparent; }
+.lang-option.active::before { background:var(--blue); }
 .sheet { padding: 0 18px 22px; }
 .hero {
   margin:18px 0 17px; padding:20px 21px;
@@ -250,5 +251,69 @@ body.modal-open { overflow:hidden; }
     transition: none !important;
     animation: none !important;
     transform: none !important;
+  }
+}
+
+
+/* Language control: bounce only its pill background, never the letters. */
+.language-picker .lang-option {
+  position: relative;
+  isolation: isolate;
+  transform: none;
+  filter: none;
+  animation: none;
+  transition: none;
+}
+.language-picker .lang-option .lang-label {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  transform: none;
+  transition: none;
+  animation: none;
+}
+.language-picker .lang-option::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  pointer-events: none;
+  transform-origin: center;
+  transition: transform 100ms ease-out, background-color 100ms ease-out;
+}
+.language-picker .lang-option.active::before { background:var(--blue); }
+.language-picker .lang-option:active,
+.language-picker .lang-option.is-squished,
+.language-picker .lang-option.jelly-pop {
+  transform: none;
+  filter: none;
+  animation: none;
+}
+.language-picker .lang-option:active::before,
+.language-picker .lang-option.is-squished::before {
+  transform: scale(.90, .84);
+  background: var(--sky);
+}
+.language-picker .lang-option.active:active::before,
+.language-picker .lang-option.active.is-squished::before {
+  background: var(--blue);
+}
+.language-picker .lang-option.jelly-pop::before {
+  animation: wiffy-language-squish 470ms both;
+}
+@keyframes wiffy-language-squish {
+  0%   { transform: scale(.90, .84); }
+  32%  { transform: scale(1.075, 1.065); }
+  58%  { transform: scale(.971, .961); }
+  79%  { transform: scale(1.015, 1.012); }
+  100% { transform: scale(1, 1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .language-picker .lang-option::before {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
   }
 }
