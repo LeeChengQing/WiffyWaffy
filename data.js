@@ -9,7 +9,12 @@ const MENU = [
   ['dubai-kunafa', 'Dubai Kunafa', 'seoul', 13.9, 'Pistachio kunafa crunch with cream', '开心果卡达伊夫脆配奶油', 'Kunafa pistachio rangup dengan krim'],
   ['biscoff-crunch', 'Biscoff Crunch', 'seoul', 13.9, 'Biscoff cream and cookie crunch', '莲花饼奶油与饼干脆', 'Krim Biscoff dan biskut rangup'],
   ['nutella-oreo', 'Nutella Oreo', 'seoul', 13.9, 'Nutella, Oreo and cream', '能多益、奥利奥与奶油', 'Nutella, Oreo dan krim'],
-  ['classic-mix', 'Classic: Mix Any 2', 'classic', 7.9, 'Pick any 2 flavours', '任选2种口味', 'Pilih mana-mana 2 perisa'],
+];
+
+const SECTIONS = [
+  ['top', 'top', 'sub_top'],
+  ['seoul', 'seoul', ''],
+  ['classic', 'classic', 'sub_classic'],
 ];
 
 const FLAVOURS = [
@@ -38,6 +43,14 @@ const I18N = {
     allergenText: 'May contain peanuts, tree nuts, milk, wheat, egg.',
     close: 'Close',
     mix: 'Pick 2 flavours',
+    sub_top: 'The 2-hour crunch',
+    sub_classic: 'Original',
+    mochi: 'Mochi',
+    promoTitle: 'Mix any 2 @ RM 7.90',
+    promoSub: 'Classic flavours, your combo',
+    promoBtn: 'Mix now',
+    classicName: 'Mix Any 2 Flavours',
+    loc: 'Location and info',
   },
   zh: {
     all: '全部',
@@ -55,6 +68,14 @@ const I18N = {
     allergenText: '可能含有花生、坚果、牛奶、小麦、鸡蛋。',
     close: '关闭',
     mix: '选择2种口味',
+    sub_top: '2小时酥脆',
+    sub_classic: '经典原味',
+    mochi: '麻糬',
+    promoTitle: '任选2种 @ RM 7.90',
+    promoSub: '经典口味，自由搭配',
+    promoBtn: '立即搭配',
+    classicName: '任选2种口味',
+    loc: '位置与信息',
   },
   ms: {
     all: 'Semua',
@@ -72,5 +93,13 @@ const I18N = {
     allergenText: 'Mungkin mengandungi kacang tanah, kekacang, susu, gandum, telur.',
     close: 'Tutup',
     mix: 'Pilih 2 perisa',
+    sub_top: 'Rangup 2 jam',
+    sub_classic: 'Asli',
+    mochi: 'Mochi',
+    promoTitle: 'Pilih mana-mana 2 @ RM 7.90',
+    promoSub: 'Perisa Klasik, pilihan anda',
+    promoBtn: 'Pilih sekarang',
+    classicName: 'Pilih Mana-mana 2 Perisa',
+    loc: 'Lokasi & maklumat',
   },
 };

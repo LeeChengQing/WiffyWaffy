@@ -4,17 +4,20 @@
 
   const state = {
     lang: readLang(),
-    tab: 'home',
-    category: 'all',
-    query: '',
-    sheet: null,
+    cat: 'all',
+    q: '',
+    sheet: false,
     picks: []
   };
 
-  const view = document.getElementById('view');
+  const LI = { en: 0, zh: 1, ms: 2 };
+  const app = document.querySelector('.app');
   const modal = document.getElementById('modal');
-  const header = document.querySelector('.top');
-  const nav = document.querySelector('.phone nav');
+  const search = document.getElementById('q');
+  const location = document.getElementById('loc');
+  const promo = document.getElementById('promo');
+  const chips = document.getElementById('chips');
+  const list = document.getElementById('list');
   let previouslyFocused = null;
 
   function readLang() {
@@ -41,88 +44,53 @@
     } catch (_) { return ''; }
   }
 
-  function renderTop() {
-    header.innerHTML =
-      '<div class="brand"><div class="brand-mark" aria-hidden="true">🧇</div>' +
-        '<div class="brand-copy"><span class="eyebrow">FRESHLY MADE</span><h1>Wiffy Waffy</h1>' +
-        '<p>Happiness in every bite!</p></div></div>' +
-      '<div class="language-picker" role="group" aria-label="Choose language">' +
-      [['en','EN'], ['zh','中'], ['ms','BM']].map(([code,label]) =>
-        '<button type="button" class="lang-option ' + (state.lang === code ? 'active' : '') +
-        '" data-lang="' + code + '" aria-pressed="' + (state.lang === code) + '"><span class="lang-label">' + label + '</span></button>'
-      ).join('') + '</div>';
-    document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : state.lang === 'ms' ? 'ms' : 'en';
+  function paintLang() {
+    document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : state.lang;
+    document.querySelectorAll('[data-lang]').forEach(button => {
+      button.setAttribute('aria-pressed', button.dataset.lang === state.lang);
+    });
+    search.placeholder = t('search');
+    search.setAttribute('aria-label', t('search'));
+    location.setAttribute('aria-label', t('loc'));
   }
 
-  function renderNav() {
-    nav.setAttribute('aria-label', 'Main navigation');
-    nav.innerHTML =
-      '<button type="button" data-tab="home" class="nav-item ' + (state.tab === 'home' ? 'selected' : '') +
-      '" aria-current="' + (state.tab === 'home' ? 'page' : 'false') + '"><span aria-hidden="true">⌂</span>' + esc(t('home')) + '</button>' +
-      '<button type="button" data-tab="info" class="nav-item ' + (state.tab === 'info' ? 'selected' : '') +
-      '" aria-current="' + (state.tab === 'info' ? 'page' : 'false') + '"><span aria-hidden="true">ⓘ</span>' + esc(t('info')) + '</button>';
+  function paintPromo() {
+    promo.innerHTML = `<div><b>${t('promoTitle')}</b><span>${t('promoSub')}</span><div class="dots">${FLAVOURS.map(f => `<i style="background:${f[0]}"></i>`).join('')}</div></div><button data-go="classic">${t('promoBtn')}</button>`;
   }
 
-  function cardMarkup(item) {
-    const id = item[0];
-    const tag = item[2] === 'top' ? t('top') : item[2] === 'seoul' ? t('seoul') : t('classic');
-    return '<button type="button" class="product-card" data-product="' + esc(id) + '" aria-label="' +
-      esc(itemName(item) + ', ' + money(item[3])) + '">' +
-      '<span class="product-art art-' + esc(item[2]) + '"><img src="assets/products/' + esc(id) + '.webp" alt="" loading="lazy" decoding="async" width="640" height="640"></span>' +
-      '<span class="product-copy"><span class="product-tag">' + esc(tag) + '</span>' +
-      '<strong>' + esc(itemName(item)) + '</strong>' +
-      '<span class="product-description">' + esc(itemDesc(item)) + '</span>' +
-      '<span class="product-price">' + esc(money(item[3])) + '</span></span>' +
-      '<span class="card-chevron" aria-hidden="true">›</span></button>';
+  function paintChips() {
+    chips.innerHTML = ['all', ...SECTIONS.map(([id]) => id)].map(c =>
+      `<button class="chip" data-cat="${c}" aria-pressed="${state.cat === c}">${t(c)}</button>`
+    ).join('');
   }
 
-  function filteredMenu() {
-    const q = state.query.trim().toLocaleLowerCase();
-    return MENU.filter(item => (state.category === 'all' || item[2] === state.category) &&
-      (!q || [item[1], item[4], item[5], item[6], t(item[2])].some(v =>
-        String(v).toLocaleLowerCase().includes(q))));
+  function productCard(m) {
+    return `<button class="card" data-id="${m[0]}"><div class="tile">${m[0].includes('mochi') ? `<span class="badge">${t('mochi')}</span>` : ''}<img src="assets/products/${m[0]}.webp" onerror="this.onerror=null;this.src='assets/placeholder.svg'" width="120" height="120" loading="lazy" alt=""></div><div class="name">${m[1]}</div><div class="desc">${m[4 + LI[state.lang]]}</div><div class="price">${money(m[3])}</div></button>`;
   }
 
-  function renderCards() {
-    const wrap = document.getElementById('menu-results');
-    if (!wrap) return;
-    const items = filteredMenu();
-    wrap.innerHTML = items.length ?
-      items.map(cardMarkup).join('') :
-      '<p class="empty-results" role="status">' + esc(t('none')) + '</p>';
+  function classicCard() {
+    return `<button class="card wide" data-id="classic-mix"><div class="tile"><img src="assets/products/classic-mix.webp" onerror="this.onerror=null;this.src='assets/placeholder.svg'" width="96" height="96" alt=""></div><div><div class="name">${t('classicName')}</div><div class="desc">${FLAVOURS.map(f => f[1 + LI[state.lang]]).join(' · ')}</div><div class="price">RM 7.90</div></div></button>`;
   }
 
-  function renderHome() {
-    view.className = 'sheet home-view';
-    view.innerHTML =
-      '<div class="hero"><span class="hero-label">THE WAFFLE MENU</span>' +
-      '<h2>' + esc(t('menu')) + ' <span class="hero-waffle" aria-hidden="true">✦</span></h2>' +
-      '<p>' + esc(state.lang === 'zh' ? '香脆、甜蜜，现点现做' : state.lang === 'ms' ?
-        'Rangup, manis dan dibuat segar' : 'Crispy, sweet, made fresh') + '</p></div>' +
-      '<label class="search-wrap"><span aria-hidden="true">⌕</span><span class="sr-only">' +
-      esc(t('search')) + '</span><input id="menu-search" type="search" inputmode="search" autocomplete="off" ' +
-      'placeholder="' + esc(t('search')) + '" value="' + esc(state.query) + '"></label>' +
-      '<div class="chips" role="group" aria-label="Filter menu">' +
-      ['all','top','seoul','classic'].map(cat =>
-        '<button type="button" class="chip ' + (state.category === cat ? 'active' : '') + '" data-cat="' + cat +
-        '" aria-pressed="' + (state.category === cat) + '">' + esc(t(cat)) + '</button>'
-      ).join('') + '</div>' +
-      '<div class="menu-heading"><h3>' + esc(t(state.category === 'all' ? 'all' : state.category)) +
-      '</h3><span id="product-count"></span></div>' +
-      '<div class="cards" id="menu-results"></div>';
-    renderCards();
-    const count = document.getElementById('product-count');
-    if (count) count.textContent = filteredMenu().length + ' / ' + MENU.length;
+  function paintList() {
+    const q = state.q.toLowerCase();
+    list.innerHTML = SECTIONS.map(([id, title, sub]) => {
+      if (state.cat !== 'all' && state.cat !== id) return '';
+      const cards = id === 'classic'
+        ? ((t('classicName') + ' classic mix').toLowerCase().includes(q) ? classicCard() : '')
+        : MENU.filter(m => m[2] === id && m[1].toLowerCase().includes(q)).map(productCard).join('');
+      if (!cards) return '';
+      return `<section id="s-${id}"><h2>${t(title)}${sub ? `<small>${t(sub)}</small>` : ''}</h2><div class="grid">${cards}</div></section>`;
+    }).join('') || `<p class="empty">${t('none')}</p>`;
   }
 
-  function renderInfo() {
-    view.className = 'sheet info-view';
+  function infoHtml() {
     const content = [];
     if (SHOP.address) content.push('<p>📍 ' + esc(SHOP.address) + '</p>');
     if (SHOP.hours) content.push('<p>🕒 ' + esc(SHOP.hours) + '</p>');
     if (SHOP.phone) content.push('<a href="tel:' + esc(String(SHOP.phone).replace(/[^+0-9]/g,'')) +
       '">📞 ' + esc(SHOP.phone) + '</a>');
-    if (SHOP.maps && safeUrl(SHOP.maps)) content.push('<a class="chip info-link" target="_blank" rel="noopener noreferrer" href="' +
+    if (SHOP.maps && safeUrl(SHOP.maps)) content.push('<a class="chip" target="_blank" rel="noopener" href="' +
       esc(safeUrl(SHOP.maps)) + '">' + esc(t('dir')) + '</a>');
     if (Array.isArray(SHOP.socials)) SHOP.socials.forEach(social => {
       const name = social.name || social[0];
@@ -130,36 +98,33 @@
       if (name && url) content.push('<a target="_blank" rel="noopener noreferrer" href="' +
         esc(url) + '">' + esc(name) + '</a>');
     });
-    view.innerHTML = '<div class="handle" aria-hidden="true"></div><h2>Wiffy Waffy</h2>' +
-      (content.length ? content.join('') : '<p class="empty">' + esc(t('soon')) + '</p>');
+    return '<h3 id="sheet-title">Wiffy Waffy</h3>' +
+      (content.length ? content.join('') : '<p>' + esc(t('soon')) + '</p>');
   }
 
   function render() {
-    if (window.WiffyMotion) window.WiffyMotion.beforePageUpdate();
-    renderTop();
-    renderNav();
-    if (state.tab === 'home') renderHome(); else renderInfo();
-    renderSheet();
-    if (window.WiffyMotion) window.WiffyMotion.page();
+    paintLang();
+    paintPromo();
+    paintChips();
+    paintList();
   }
 
-  function openSheet(kind, item) {
+  function openSheet(html) {
     previouslyFocused = document.activeElement;
-    state.sheet = { kind, item: item || null };
-    state.picks = [];
-    renderSheet();
+    state.sheet = true;
+    sheetFrame(html);
     document.body.classList.add('modal-open');
-    document.querySelector('.phone').inert = true;
+    app.inert = true;
     const close = modal.querySelector('.close-sheet');
     if (close) close.focus();
     if (window.WiffyMotion) window.WiffyMotion.sheetOpen();
   }
 
   function finishCloseSheet() {
-    state.sheet = null;
+    state.sheet = false;
     modal.innerHTML = '';
     document.body.classList.remove('modal-open');
-    document.querySelector('.phone').inert = false;
+    app.inert = false;
     if (previouslyFocused && previouslyFocused.isConnected) previouslyFocused.focus();
     previouslyFocused = null;
   }
@@ -170,54 +135,45 @@
     else finishCloseSheet();
   }
 
-  function openDetail(item) { openSheet('detail', item); }
-  function openMixer() { openSheet('mixer', null); }
+  function openDetail(item) {
+    openSheet(`<div class="tile big"><img src="assets/products/${esc(item[0])}.webp" alt="" width="120" height="120"></div>` +
+      `<h3 id="sheet-title">${esc(itemName(item))}</h3><p>${esc(itemDesc(item))}</p>` +
+      `<div class="price">${esc(money(item[3]))}</div>` +
+      `<p class="allergen"><strong>${esc(t('allergens'))}</strong> · ${esc(t('allergenText'))}</p>`);
+  }
+
+  function openMixer() {
+    state.picks = [];
+    openSheet(mixerHtml());
+  }
 
   function sheetFrame(inner) {
     modal.innerHTML = '<div class="modal-backdrop" data-close="true"></div>' +
-      '<section class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">' +
-      '<div class="sheet-grip" aria-hidden="true"></div>' +
-      '<button type="button" class="close-sheet" data-close="true" aria-label="' + esc(t('close')) + '">×</button>' +
+      '<section class="box bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">' +
+      '<button type="button" class="ib close close-sheet" data-close="true" aria-label="' + esc(t('close')) + '">×</button>' +
       inner + '</section>';
   }
 
-  function renderSheet() {
-    if (!state.sheet) { modal.innerHTML = ''; return; }
-    if (state.sheet.kind === 'mixer') { paintMix(); return; }
-    const item = state.sheet.item;
-    const cat = item[2] === 'top' ? t('top') : item[2] === 'seoul' ? t('seoul') : t('classic');
-    sheetFrame('<div class="detail-illustration"><img src="assets/products/' + esc(item[0]) + '.webp" alt="" loading="eager" decoding="async" width="640" height="640"></div>' +
-      '<span class="product-tag">' + esc(cat) + '</span><h2 id="sheet-title">' +
-      esc(itemName(item)) + '</h2><p class="sheet-desc">' + esc(itemDesc(item)) + '</p>' +
-      '<div class="detail-price">' + esc(money(item[3])) + '</div>' +
-      '<div class="allergen-box"><strong>' + esc(t('allergens')) + '</strong><p>' +
-      esc(t('allergenText')) + '</p></div>');
-  }
-
-  function paintMix() {
-    const a = state.picks.length ? FLAVOURS[state.picks[0]][0] : '#e3c49a';
-    const b = state.picks.length > 1 ? FLAVOURS[state.picks[1]][0] : '#fff2cf';
-    const bg = 'linear-gradient(90deg,' + a + ' 0%,' + a + ' 50%,' + b + ' 50%,' + b + ' 100%)';
-    const chosenNames = state.picks.map(i => FLAVOURS[i][state.lang === 'zh' ? 2 : state.lang === 'ms' ? 3 : 1]);
-    sheetFrame('<h2 id="sheet-title">' + esc(t('mix')) + '</h2>' +
-      '<div class="classic-reference"><img src="assets/products/classic-mix.webp" alt="" loading="eager" decoding="async" width="640" height="640"><img src="assets/products/classic-mix-alternate.webp" alt="" loading="lazy" decoding="async" width="640" height="640"></div>' +
-      '<p class="sheet-desc">' + esc(state.lang === 'zh' ? '可重复选择，第三次点击会替换最早的口味。' :
+  function mixerHtml() {
+    const left = FLAVOURS[state.picks[0]]?.[0] || '#e3c49a';
+    const right = FLAVOURS[state.picks[1]]?.[0] || '#fff2cf';
+    const waffle = `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 14Q10 22 10 66Q30 80 50 80z" fill="${left}" stroke="#0A2540" stroke-width="3"/><path d="M50 14Q90 22 90 66Q70 80 50 80z" fill="${right}" stroke="#0A2540" stroke-width="3"/><path d="M30 20v56M50 14v66M70 20v56M14 44h72M12 60h76" stroke="#0A2540" stroke-opacity=".3" stroke-width="3"/></svg>`;
+    const chosenNames = state.picks.map(i => FLAVOURS[i][1 + LI[state.lang]]);
+    return '<div class="tile big">' + waffle + '</div><h3 id="sheet-title">' + esc(t('mix')) + '</h3>' +
+      '<p>' + esc(state.lang === 'zh' ? '可重复选择，第三次点击会替换最早的口味。' :
       state.lang === 'ms' ? 'Boleh pilih perisa sama; pilihan ketiga menggantikan yang pertama.' :
       'Duplicates welcome. Your third pick replaces the oldest.') + '</p>' +
-      '<div class="mix-preview"><div class="mix-waffle" style="background:' + bg + '" aria-hidden="true">' +
-      '<span class="waffle-grid"></span></div></div>' +
       '<p class="mix-selection" aria-live="polite">' +
       esc(chosenNames.length ? chosenNames.join(' + ') : (state.lang === 'zh' ? '请选择两种口味' :
       state.lang === 'ms' ? 'Sila pilih dua perisa' : 'Choose two flavours')) + '</p>' +
       '<div class="flavours">' + FLAVOURS.map((flavour, i) =>
         '<button type="button" class="flavour ' + (state.picks.includes(i) ? 'picked' : '') +
         '" data-flavour="' + i + '"><span class="flavour-dot" style="background:' +
-        esc(flavour[0]) + '"></span><span>' +
-        esc(flavour[state.lang === 'zh' ? 2 : state.lang === 'ms' ? 3 : 1]) +
+        esc(flavour[0]) + '"></span><span>' + esc(flavour[1 + LI[state.lang]]) +
         '</span><span class="pick-count">' + state.picks.filter(p => p === i).length +
         '</span></button>'
       ).join('') + '</div><div class="mixer-total"><strong>' + money(7.9) +
-      '</strong><span>' + state.picks.length + ' / 2</span></div>');
+      '</strong><span>' + state.picks.length + ' / 2</span></div>';
   }
 
   document.addEventListener('click', event => {
@@ -228,44 +184,52 @@
       render();
       return;
     }
-    const tab = event.target.closest('[data-tab]');
-    if (tab) {
-      state.tab = tab.dataset.tab;
-      closeSheet();
-      render();
+    if (event.target.closest('#loc')) {
+      openSheet(infoHtml());
+      return;
+    }
+    if (event.target.closest('[data-go="classic"]')) {
+      document.getElementById('s-classic')?.scrollIntoView({ behavior: 'smooth' });
+      openMixer();
       return;
     }
     const cat = event.target.closest('[data-cat]');
     if (cat) {
-      state.category = cat.dataset.cat;
-      renderHome();
+      state.cat = cat.dataset.cat;
+      paintChips();
+      paintList();
+      if (state.cat === 'all') window.scrollTo({ top: 0, behavior: 'smooth' });
+      else document.getElementById('s-' + state.cat)?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
-    const product = event.target.closest('[data-product]');
+    const product = event.target.closest('[data-id]');
     if (product) {
-      const item = MENU.find(m => m[0] === product.dataset.product);
-      if (item) item[2] === 'classic' ? openMixer() : openDetail(item);
+      const id = product.dataset.id;
+      if (id === 'classic-mix') openMixer();
+      else {
+        const item = MENU.find(m => m[0] === id);
+        if (item) openDetail(item);
+      }
       return;
     }
     const flavour = event.target.closest('[data-flavour]');
-    if (flavour && state.sheet && state.sheet.kind === 'mixer') {
+    if (flavour && modal.contains(flavour)) {
       state.picks.push(Number(flavour.dataset.flavour));
       if (state.picks.length > 2) state.picks.shift();
       const previously = flavour.dataset.flavour;
-      paintMix();
+      const scrollTop = modal.querySelector('.box').scrollTop;
+      sheetFrame(mixerHtml());
+      modal.querySelector('.box').scrollTop = scrollTop;
       const current = modal.querySelector('[data-flavour="' + previously + '"]');
-      if (current) current.focus();
+      if (current) current.focus({ preventScroll: true });
       return;
     }
     if (event.target.closest('[data-close]')) closeSheet();
   });
 
-  document.addEventListener('input', event => {
-    if (event.target.id !== 'menu-search') return;
-    state.query = event.target.value;
-    renderCards();
-    const count = document.getElementById('product-count');
-    if (count) count.textContent = filteredMenu().length + ' / ' + MENU.length;
+  search.addEventListener('input', event => {
+    state.q = event.target.value;
+    paintList();
   });
 
   document.addEventListener('keydown', event => {
@@ -281,5 +245,33 @@
     }
   });
 
-  render();
+  document.addEventListener('DOMContentLoaded', render, { once: true });
+})();
+
+(() => {
+  const splash = document.getElementById('splash');
+  if (!splash) return;
+
+  const done = () => {
+    splash.remove();
+    document.body.style.overflow = '';
+  };
+  if (document.documentElement.classList.contains('nosplash')) {
+    done();
+    return;
+  }
+
+  sessionStorage.splash = 1;
+  document.body.style.overflow = 'hidden';
+  const out = () => {
+    splash.classList.add('out');
+    splash.addEventListener('animationend', event => {
+      if (event.target === splash) done();
+    });
+  };
+  const timer = setTimeout(out, 2900);
+  splash.addEventListener('click', () => {
+    clearTimeout(timer);
+    out();
+  }, { once: true });
 })();
