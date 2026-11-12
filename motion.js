@@ -1,206 +1,168 @@
-/* Optional motion layer. The menu still works if GSAP CDN is unavailable. */
+/* Wiffy Waffy motion: one welcome animation; calm, tactile controls thereafter. */
 (() => {
   'use strict';
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const motion = { heroSplit: null, brandSplit: null, heroTimeline: null, brandTween: null,
-    badgeTween: null, cardsTween: null, sheetTimeline: null, generation: 0, closing: false };
-  const canAnimate = () => !reducedMotion.matches && typeof window.gsap !== 'undefined';
-  const engine = () => window.gsap;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const INTRO_KEY = 'wiffywaffy-intro-seen';
+  const motion = { introAttempted: false, titleSplit: null, titleTween: null,
+    sheetTween: null, closing: false };
+  const hasGSAP = () => typeof window.gsap !== 'undefined';
+  const canAnimate = () => !prefersReducedMotion.matches && hasGSAP();
 
-  function kill(key) {
-    if (motion[key]) {
-      motion[key].kill();
-      motion[key] = null;
+  function hasPlayedIntro() {
+    try { return window.sessionStorage.getItem(INTRO_KEY) === '1'; }
+    catch (_) { return false; }
+  }
+  function markIntroPlayed() {
+    try { window.sessionStorage.setItem(INTRO_KEY, '1'); } catch (_) {}
+  }
+
+  function clearTitleAnimation() {
+    if (motion.titleTween) {
+      motion.titleTween.kill();
+      motion.titleTween = null;
     }
-  }
-  function resetTitles() {
-    motion.generation += 1;
-    kill('heroTimeline');
-    kill('brandTween');
-    kill('badgeTween');
-    kill('cardsTween');
-    if (motion.heroSplit) { motion.heroSplit.revert(); motion.heroSplit = null; }
-    if (motion.brandSplit) { motion.brandSplit.revert(); motion.brandSplit = null; }
-  }
-
-  // The hero title completes the requested full drop / settle / hold / drop-out cycle.
-  // This repeats only on the small hero title, never on menu information or controls.
-  function elasticTitle() {
-    const target = document.querySelector('.elastic-title');
-    if (!target || !canAnimate() || !window.SplitText) return;
-    const split = window.SplitText.create(target, { type: 'words,chars' });
-    motion.heroSplit = split;
-    const chars = split.chars;
-    if (!chars.length) return;
-    const gsap = engine();
-    gsap.set(chars, { transformOrigin: '50% 100%', willChange: 'transform,opacity' });
-    motion.heroTimeline = gsap.timeline({ repeat: -1, repeatDelay: 0.25 })
-      .from(chars, {
-        y: -108, rotation: () => gsap.utils.random(-28, 28), scale: 0.65,
-        autoAlpha: 0, duration: 1.15, ease: 'elastic.out(1,0.35)',
-        stagger: { each: 0.065, from: 'random' }
-      })
-      .to({}, { duration: 2.5 })
-      .to(chars, {
-        y: 100, rotation: () => gsap.utils.random(-18, 18), autoAlpha: 0,
-        scale: 0.82, duration: 0.5, ease: 'power2.in', stagger: 0
-      });
-  }
-
-  function brandEntrance() {
-    if (!canAnimate()) return;
-    const gsap = engine();
-    const logo = document.querySelector('.brand-mark');
-    if (logo) motion.badgeTween = gsap.fromTo(logo,
-      { y: -32, rotation: -25, scale: 0.7, opacity: 0 },
-      { y: 0, rotation: -5, scale: 1, opacity: 1, duration: 1.05,
-        ease: 'elastic.out(1,0.45)', clearProps: 'opacity,transform' });
-    const title = document.querySelector('.brand-copy h1');
-    if (title && window.SplitText) {
-      motion.brandSplit = window.SplitText.create(title, { type: 'words,chars' });
-      const split = motion.brandSplit;
-      motion.brandTween = gsap.from(split.chars, {
-        y: -51, rotation: () => gsap.utils.random(-22, 22), scale: 0.6, autoAlpha: 0,
-        duration: 1.1, ease: 'elastic.out(1,0.35)',
-        stagger: { each: 0.045, from: 'random' },
-        onComplete: () => {
-          if (motion.brandSplit === split) {
-            split.revert();
-            motion.brandSplit = null;
-          }
-        }
-      });
+    if (motion.titleSplit) {
+      motion.titleSplit.revert();
+      motion.titleSplit = null;
     }
   }
 
-  function cardEntrance() {
-    if (!canAnimate()) return;
-    const cards = document.querySelectorAll('.product-card');
-    kill('cardsTween');
-    if (!cards.length) return;
-    motion.cardsTween = engine().fromTo(cards,
-      { y: 20, scale: 0.965, autoAlpha: 0 },
-      { y: 0, scale: 1, autoAlpha: 1, duration: 0.58, stagger: 0.055,
-        ease: 'back.out(1.65)', clearProps: 'opacity,visibility,transform' });
-  }
-
+  // Only the brand name animates, once per tab session, with no loop or exit.
   function page() {
-    resetTitles();
-    if (!canAnimate()) return;
-    // Delay splitting until the font is ready, without delaying page interaction.
-    const generation = motion.generation;
-    const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    Promise.resolve(ready).then(() => {
-      if (generation !== motion.generation || !canAnimate()) return;
-      if (window.SplitText) engine().registerPlugin(window.SplitText);
-      brandEntrance();
-      elasticTitle();
-    }).catch(() => {});
-    cardEntrance();
-    const info = document.querySelector('.info-view');
-    if (info) engine().fromTo(info, { y: 18, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, ease: 'back.out(1.3)', clearProps: 'opacity,transform' });
+    if (motion.introAttempted) return;
+    motion.introAttempted = true;
+    if (!canAnimate() || !window.SplitText || hasPlayedIntro()) return;
+
+    const title = document.querySelector('.brand-copy h1');
+    if (!title) return;
+    const fontReady = document.fonts && document.fonts.ready ?
+      document.fonts.ready : Promise.resolve();
+    Promise.resolve(fontReady).then(() => {
+      // User navigation is more important than finishing an intro animation.
+      if (!title.isConnected || !canAnimate() || hasPlayedIntro()) return;
+      window.gsap.registerPlugin(window.SplitText);
+      motion.titleSplit = window.SplitText.create(title, { type: 'chars' });
+      const split = motion.titleSplit;
+      if (!split.chars.length) { clearTitleAnimation(); return; }
+
+      markIntroPlayed();
+      motion.titleTween = window.gsap.from(split.chars, {
+        y: -38,
+        rotation: () => window.gsap.utils.random(-12, 12),
+        scale: 0.78,
+        autoAlpha: 0,
+        duration: 0.95,
+        ease: 'elastic.out(1,0.52)',
+        stagger: { each: 0.035, from: 'random' },
+        onComplete: clearTitleAnimation
+      });
+    }).catch(clearTitleAnimation);
   }
 
+  // A quick, unobtrusive bottom-sheet transition; no rubber-band oscillation.
   function sheetOpen() {
     if (!canAnimate()) return;
-    kill('sheetTimeline');
-    const gsap = engine();
-    const backdrop = document.querySelector('#modal .modal-backdrop');
+    if (motion.sheetTween) motion.sheetTween.kill();
     const sheet = document.querySelector('#modal .bottom-sheet');
-    if (!sheet) return;
-    motion.sheetTimeline = gsap.timeline()
-      .fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.26 }, 0)
-      .fromTo(sheet, { yPercent: 110, scaleY: 0.93 },
-        { yPercent: 0, scaleY: 1, duration: 0.87,
-          transformOrigin: '50% 100%', ease: 'elastic.out(1,0.56)',
-          clearProps: 'transform' }, 0.02);
+    const backdrop = document.querySelector('#modal .modal-backdrop');
+    if (!sheet || !backdrop) return;
+    motion.sheetTween = window.gsap.timeline()
+      .fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0)
+      .fromTo(sheet, { yPercent: 100 }, {
+        yPercent: 0, duration: 0.32, ease: 'power3.out',
+        clearProps: 'transform'
+      }, 0);
   }
 
   function sheetClose(done) {
     if (motion.closing) return;
-    if (!canAnimate() || !document.querySelector('#modal .bottom-sheet')) {
-      done();
-      return;
-    }
-    motion.closing = true;
-    kill('sheetTimeline');
-    const gsap = engine();
+    if (!canAnimate()) { done(); return; }
     const sheet = document.querySelector('#modal .bottom-sheet');
     const backdrop = document.querySelector('#modal .modal-backdrop');
-    motion.sheetTimeline = gsap.timeline({ onComplete: () => {
+    if (!sheet || !backdrop) { done(); return; }
+    motion.closing = true;
+    if (motion.sheetTween) motion.sheetTween.kill();
+    motion.sheetTween = window.gsap.timeline({ onComplete() {
       motion.closing = false;
-      motion.sheetTimeline = null;
+      motion.sheetTween = null;
       done();
     }})
-      .to(sheet, { yPercent: 108, scaleY: 0.96, opacity: 0.65,
-        duration: 0.29, ease: 'power2.in' }, 0)
-      .to(backdrop, { opacity: 0, duration: 0.25, ease: 'power1.out' }, 0);
+      .to(sheet, { yPercent: 100, duration: 0.22, ease: 'power2.in' }, 0)
+      .to(backdrop, { opacity: 0, duration: 0.2 }, 0);
   }
 
-  function mixPicked() {
-    if (!canAnimate()) return;
-    const gsap = engine();
-    const waffle = document.querySelector('#modal .mix-waffle');
-    const selection = document.querySelector('#modal .mix-selection');
-    const choices = document.querySelectorAll('#modal .flavour.picked');
-    if (waffle) gsap.fromTo(waffle, { scale: 0.85, rotation: -9 },
-      { scale: 1, rotation: 0, duration: 0.75, ease: 'elastic.out(1,0.4)',
-        clearProps: 'transform' });
-    if (selection) gsap.fromTo(selection, { y: 9, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5, ease: 'back.out(2)',
-        clearProps: 'opacity,transform' });
-    if (choices.length) gsap.fromTo(choices, { scale: 0.95 },
-      { scale: 1, duration: 0.55, stagger: 0.06, ease: 'elastic.out(1,0.5)',
-        clearProps: 'transform' });
-  }
-
-  // Delegation also covers controls created later by the menu and bottom sheets.
+  // The same lightweight feedback works for pointer, touch and keyboard controls.
   function interactiveTarget(event) {
-    return event.target instanceof Element ? event.target.closest('button:not(:disabled),a.chip') : null;
+    return event.target instanceof Element ?
+      event.target.closest('button:not(:disabled),a.chip') : null;
   }
+
+  function bounce(button) {
+    if (prefersReducedMotion.matches || !button || !button.isConnected) return;
+    button.classList.remove('jelly-pop');
+    // Restart the short feedback if the user taps twice quickly.
+    void button.offsetWidth;
+    button.classList.add('jelly-pop');
+    window.setTimeout(() => {
+      if (button.isConnected) button.classList.remove('jelly-pop');
+    }, 520);
+  }
+
   const pressed = new Map();
-  function squish(event) {
-    if (reducedMotion.matches) return;
+  function press(event) {
+    if (prefersReducedMotion.matches) return;
     const button = interactiveTarget(event);
     if (!button) return;
     button.classList.add('is-squished');
     if (typeof event.pointerId === 'number') pressed.set(event.pointerId, button);
   }
-  function springBack(event) {
-    // Keep the original button responsive even if a finger slides outside it.
-    const button = (typeof event.pointerId === 'number' && pressed.get(event.pointerId)) ||
-      interactiveTarget(event);
-    if (typeof event.pointerId === 'number') pressed.delete(event.pointerId);
+  function release(event, cancelled = false) {
+    const pointer = typeof event.pointerId === 'number' ? event.pointerId : null;
+    const button = (pointer !== null && pressed.get(pointer)) || interactiveTarget(event);
+    if (pointer !== null) pressed.delete(pointer);
     if (!button) return;
     button.classList.remove('is-squished');
-    if (reducedMotion.matches) return;
-    button.classList.remove('jelly-pop');
-    // Force a restart when the same control is pressed repeatedly.
-    void button.offsetWidth;
-    button.classList.add('jelly-pop');
-    window.setTimeout(() => { if (button.isConnected) button.classList.remove('jelly-pop'); }, 690);
+    if (!cancelled) bounce(button);
   }
-  document.addEventListener('pointerdown', squish, { passive: true });
-  document.addEventListener('pointerup', springBack, { passive: true });
-  document.addEventListener('pointercancel', springBack, { passive: true });
+  document.addEventListener('pointerdown', press, { passive: true });
+  document.addEventListener('pointerup', event => release(event), { passive: true });
+  document.addEventListener('pointercancel', event => release(event, true), { passive: true });
   document.addEventListener('keydown', event => {
-    if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) squish(event);
+    if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) press(event);
   });
   document.addEventListener('keyup', event => {
-    if (event.key === 'Enter' || event.key === ' ') springBack(event);
+    if (event.key === 'Enter' || event.key === ' ') release(event);
   });
-  if (typeof reducedMotion.addEventListener === 'function') {
-    reducedMotion.addEventListener('change', () => {
-      if (reducedMotion.matches) {
-        resetTitles();
-        document.querySelectorAll('.jelly-pop,.is-squished').forEach(el =>
-          el.classList.remove('jelly-pop', 'is-squished'));
-      } else {
-        page();
+
+  // Some controls are rendered anew on click. Transfer feedback to the new
+  // control instead of animating a detached element (notably iPhone Safari).
+  document.addEventListener('click', event => {
+    const oldButton = interactiveTarget(event);
+    if (!oldButton) return;
+    const data = oldButton.dataset;
+    const attr = ['lang', 'cat', 'tab', 'flavour'].find(key =>
+      Object.prototype.hasOwnProperty.call(data, key));
+    if (!attr) return;
+    const value = data[attr];
+    queueMicrotask(() => {
+      const newButton = [...document.querySelectorAll('[data-' + attr + ']')]
+        .find(button => button.dataset[attr] === value);
+      if (newButton && newButton !== oldButton) bounce(newButton);
+    });
+  });
+
+  if (typeof prefersReducedMotion.addEventListener === 'function') {
+    prefersReducedMotion.addEventListener('change', () => {
+      if (prefersReducedMotion.matches) {
+        clearTitleAnimation();
+        document.querySelectorAll('.jelly-pop,.is-squished').forEach(button =>
+          button.classList.remove('jelly-pop', 'is-squished'));
       }
     });
   }
-  window.WiffyMotion = { page, beforePageUpdate: resetTitles, cardEntrance, sheetOpen, sheetClose, mixPicked };
+
+  window.WiffyMotion = {
+    page, beforePageUpdate: clearTitleAnimation, sheetOpen, sheetClose
+  };
 })();
