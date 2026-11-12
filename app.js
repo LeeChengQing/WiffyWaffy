@@ -252,7 +252,7 @@
     if (flavour && state.sheet && state.sheet.kind === 'mixer') {
       state.picks.push(Number(flavour.dataset.flavour));
       if (state.picks.length > 2) state.picks.shift();
-      const previously = document.activeElement.dataset.flavour;
+      const previously = flavour.dataset.flavour;
       paintMix();
       const current = modal.querySelector('[data-flavour="' + previously + '"]');
       if (current) current.focus();
