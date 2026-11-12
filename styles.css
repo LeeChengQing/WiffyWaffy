@@ -1,0 +1,24 @@
+:root{--bg:#FFFDF2;--blue:#0057A8;--sky:#5B9BD5;--red:#C0392B;--ink:#0A2540;--page:#e9e6da;--muted:#4a6178}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#1b1b1b}}
+:root[data-theme="dark"]{--page:#1b1b1b}
+
+body {
+  background: var(--page);
+  font-family: Fredoka, "Trebuchet MS", sans-serif;
+}
+
+button, a {
+  min-height: 44px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sky);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

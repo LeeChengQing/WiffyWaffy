@@ -1,0 +1,76 @@
+// Product image path: assets/${id}.png
+const MENU = [
+  ['choco-dark', 'Choco Dark', 'top', 8.9, 'Crisp waffle, dark chocolate coat', '香脆华夫饼，浓郁黑巧克力', 'Wafel rangup bersalut coklat gelap'],
+  ['choco-white', 'Choco White', 'top', 8.9, 'Crisp waffle, creamy white chocolate', '香脆华夫饼，奶香白巧克力', 'Wafel rangup dengan coklat putih berkrim'],
+  ['golden-durian', 'Golden Durian', 'top', 8.9, 'Crisp waffle, golden durian coat', '香脆华夫饼，金黄榴莲涂层', 'Wafel rangup bersalut durian emas'],
+  ['choco-dark-mochi', 'Choco Dark Mochi', 'top', 9.9, 'Dark chocolate with chewy mochi', '黑巧克力配软糯麻糬', 'Coklat gelap dengan mochi kenyal'],
+  ['choco-white-mochi', 'Choco White Mochi', 'top', 9.9, 'White chocolate with chewy mochi', '白巧克力配软糯麻糬', 'Coklat putih dengan mochi kenyal'],
+  ['golden-durian-mochi', 'Golden Durian Mochi', 'top', 9.9, 'Golden durian with chewy mochi', '金黄榴莲配软糯麻糬', 'Durian emas dengan mochi kenyal'],
+  ['dubai-kunafa', 'Dubai Kunafa', 'seoul', 13.9, 'Pistachio kunafa crunch with cream', '开心果卡达伊夫脆配奶油', 'Kunafa pistachio rangup dengan krim'],
+  ['biscoff-crunch', 'Biscoff Crunch', 'seoul', 13.9, 'Biscoff cream and cookie crunch', '莲花饼奶油与饼干脆', 'Krim Biscoff dan biskut rangup'],
+  ['nutella-oreo', 'Nutella Oreo', 'seoul', 13.9, 'Nutella, Oreo and cream', '能多益、奥利奥与奶油', 'Nutella, Oreo dan krim'],
+  ['classic-mix', 'Classic: Mix Any 2', 'classic', 7.9, 'Pick any 2 flavours', '任选2种口味', 'Pilih mana-mana 2 perisa'],
+];
+
+const FLAVOURS = [
+  ['#5A2F1B', 'Chocolate', '巧克力', 'Coklat'],
+  ['#C68A3A', 'Peanut Butter', '花生酱', 'Mentega Kacang'],
+  ['#D6405A', 'Strawberry', '草莓', 'Strawberi'],
+  ['#E2B93B', 'Kaya', '咖椰', 'Kaya'],
+];
+
+const SHOP = { address: '', hours: '', phone: '', maps: '', socials: [] };
+
+const I18N = {
+  en: {
+    all: 'All',
+    top: 'Top Picks',
+    seoul: 'Seoul',
+    classic: 'Classic',
+    menu: 'Menu',
+    search: 'Find waffles…',
+    none: 'No waffles found',
+    soon: 'Details coming soon',
+    dir: 'Directions',
+    home: 'Home',
+    info: 'Info',
+    allergens: 'Allergens',
+    allergenText: 'May contain peanuts, tree nuts, milk, wheat, egg.',
+    close: 'Close',
+    mix: 'Pick 2 flavours',
+  },
+  zh: {
+    all: '全部',
+    top: '精选',
+    seoul: '首尔',
+    classic: '经典',
+    menu: '菜单',
+    search: '搜索华夫饼…',
+    none: '找不到华夫饼',
+    soon: '详情即将公布',
+    dir: '路线',
+    home: '首页',
+    info: '信息',
+    allergens: '过敏原',
+    allergenText: '可能含有花生、坚果、牛奶、小麦、鸡蛋。',
+    close: '关闭',
+    mix: '选择2种口味',
+  },
+  ms: {
+    all: 'Semua',
+    top: 'Pilihan Utama',
+    seoul: 'Seoul',
+    classic: 'Klasik',
+    menu: 'Menu',
+    search: 'Cari wafel…',
+    none: 'Tiada wafel dijumpai',
+    soon: 'Butiran akan datang',
+    dir: 'Arah',
+    home: 'Utama',
+    info: 'Info',
+    allergens: 'Alergen',
+    allergenText: 'Mungkin mengandungi kacang tanah, kekacang, susu, gandum, telur.',
+    close: 'Tutup',
+    mix: 'Pilih 2 perisa',
+  },
+};
