@@ -217,3 +217,82 @@ body.modal-open { overflow:hidden; }
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
 }
+
+
+/* Wiffy Waffy motion language: squish on contact, jelly bounce on release. */
+.phone button, .bottom-sheet button, .info-link {
+  touch-action: manipulation;
+  transition: scale 170ms cubic-bezier(.18,1.8,.52,1), filter 180ms ease;
+  transform-origin: center center;
+}
+.phone button:active, .bottom-sheet button:active,
+.phone button.is-squished, .bottom-sheet button.is-squished,
+.info-link:active, .info-link.is-squished {
+  scale: .91 .88;
+  filter: brightness(.98) saturate(1.08);
+}
+.phone button.jelly-pop, .bottom-sheet button.jelly-pop, .info-link.jelly-pop {
+  animation: wiffy-jelly-pop 650ms both;
+}
+@keyframes wiffy-jelly-pop {
+  0% { scale: .91 .88; }
+  28% { scale: 1.075 .94; }
+  45% { scale: .966 1.045; }
+  64% { scale: 1.035 .979; }
+  82% { scale: .988 1.011; }
+  100% { scale: 1 1; }
+}
+.lang-option.active, .chip.active, .nav-item.selected, .flavour.picked {
+  animation: wiffy-select-bloom 500ms cubic-bezier(.18,1.75,.52,1) both;
+}
+@keyframes wiffy-select-bloom {
+  0% { scale: .86; }
+  60% { scale: 1.075; }
+  100% { scale: 1; }
+}
+.elastic-title {
+  display: inline-block;
+  white-space: nowrap;
+  transform-origin: 50% 100%;
+}
+.hero-waffle {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  animation: wiffy-star-bob 2.8s ease-in-out infinite;
+}
+@keyframes wiffy-star-bob {
+  0%, 100% { transform: rotate(-9deg) scale(1); }
+  50% { transform: rotate(14deg) scale(1.2); }
+}
+.brand-mark .brand-emoji {
+  display: inline-block;
+  animation: wiffy-logo-bob 3.6s ease-in-out infinite;
+}
+@keyframes wiffy-logo-bob {
+  0%,100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-5px) rotate(5deg); }
+}
+.product-art > span {
+  transform-origin: center bottom;
+}
+@media (hover:hover) {
+  .phone button:hover, .bottom-sheet button:hover { filter: brightness(1.035); }
+  .product-card:hover .product-art > span {
+    animation: wiffy-waffle-wiggle 650ms ease-out;
+  }
+}
+@keyframes wiffy-waffle-wiggle {
+  0%,100% { transform: rotate(-13deg) scale(1); }
+  33% { transform: rotate(6deg) scale(1.12,.92); }
+  62% { transform: rotate(-9deg) scale(.95,1.07); }
+}
+@supports not (scale: 1) {
+  .phone button:active, .bottom-sheet button:active,
+  .phone button.is-squished, .bottom-sheet button.is-squished {
+    transform: scale(.93);
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  .phone button, .bottom-sheet button, .info-link { scale: 1 !important; }
+  .hero-waffle, .brand-emoji { transform: none !important; }
+}
