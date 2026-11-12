@@ -65,7 +65,7 @@
   }
 
   function productCard(m) {
-    return `<button class="card" data-id="${m[0]}"><div class="tile">${m[0].includes('mochi') ? `<span class="badge">${t('mochi')}</span>` : ''}<img src="assets/products/${m[0]}.webp" onerror="this.onerror=null;this.src='assets/placeholder.svg'" width="120" height="120" loading="lazy" alt=""></div><div class="name">${m[1]}</div><div class="desc">${m[4 + LI[state.lang]]}</div><div class="price">${money(m[3])}</div></button>`;
+    return `<button class="card" data-id="${m[0]}"><div class="tile">${m[0].includes('mochi') ? `<span class="badge">${t('mochi')}</span>` : ''}<img src="assets/products/${m[0]}.webp?v=2" onerror="this.onerror=null;this.src='assets/placeholder.svg'" width="120" height="120" loading="lazy" alt=""></div><div class="name">${m[1]}</div><div class="desc">${m[4 + LI[state.lang]]}</div><div class="price">${money(m[3])}</div></button>`;
   }
 
   function classicCard() {
@@ -136,7 +136,7 @@
   }
 
   function openDetail(item) {
-    openSheet(`<div class="tile big"><img src="assets/products/${esc(item[0])}.webp" alt="" width="120" height="120"></div>` +
+    openSheet(`<div class="tile big product-photo"><img src="assets/products/4k/${esc(item[0])}.webp?v=2" alt="" width="240" height="240"></div>` +
       `<h3 id="sheet-title">${esc(itemName(item))}</h3><p>${esc(itemDesc(item))}</p>` +
       `<div class="price">${esc(money(item[3]))}</div>` +
       `<p class="allergen"><strong>${esc(t('allergens'))}</strong> · ${esc(t('allergenText'))}</p>`);
