@@ -179,9 +179,11 @@
   document.addEventListener('click', event => {
     const lang = event.target.closest('[data-lang]');
     if (lang) {
+      if (lang.dataset.lang === state.lang) return;
       state.lang = lang.dataset.lang;
       saveLang(state.lang);
       render();
+      window.WiffyMotion?.language(lang, list);
       return;
     }
     if (event.target.closest('#loc')) {

@@ -92,10 +92,33 @@
       .to(backdrop, { opacity: 0, duration: 0.2 }, 0);
   }
 
+  let menuBounce;
+  let languageBounce;
+
+  function language(button, menu) {
+    menuBounce?.cancel();
+    languageBounce?.cancel();
+
+    const easing = 'cubic-bezier(.25,.65,.35,1)';
+    menuBounce = menu.animate([
+      { transform: 'scale(1)', easing },
+      { transform: 'scale(.994)', offset: .28, easing },
+      { transform: 'scale(1.002)', offset: .64, easing },
+      { transform: 'scale(1)' },
+    ], { duration: 220 });
+
+    languageBounce = button.querySelector('.lang-fill').animate([
+      { transform: 'scaleX(1)', easing },
+      { transform: 'scaleX(.98)', offset: .24, easing },
+      { transform: 'scaleX(1.03)', offset: .59, easing },
+      { transform: 'scaleX(1)' },
+    ], { duration: 180 });
+  }
+
   // The same lightweight feedback works for pointer, touch and keyboard controls.
   function interactiveTarget(event) {
     return event.target instanceof Element ?
-      event.target.closest('button:not(:disabled),a.chip') : null;
+      event.target.closest('button:not(:disabled):not([data-lang]),a.chip') : null;
   }
 
   function bounce(button) {
@@ -141,7 +164,7 @@
     const oldButton = interactiveTarget(event);
     if (!oldButton) return;
     const data = oldButton.dataset;
-    const attr = ['lang', 'cat', 'tab', 'flavour'].find(key =>
+    const attr = ['cat', 'tab', 'flavour'].find(key =>
       Object.prototype.hasOwnProperty.call(data, key));
     if (!attr) return;
     const value = data[attr];
@@ -163,6 +186,6 @@
   }
 
   window.WiffyMotion = {
-    page, beforePageUpdate: clearTitleAnimation, sheetOpen, sheetClose
+    page, beforePageUpdate: clearTitleAnimation, sheetOpen, sheetClose, language
   };
 })();
