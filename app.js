@@ -43,7 +43,7 @@
 
   function renderTop() {
     header.innerHTML =
-      '<div class="brand"><div class="brand-mark" aria-hidden="true"><span class="brand-emoji">🧇</span></div>' +
+      '<div class="brand"><div class="brand-mark" aria-hidden="true">🧇</div>' +
         '<div class="brand-copy"><span class="eyebrow">FRESHLY MADE</span><h1>Wiffy Waffy</h1>' +
         '<p>Happiness in every bite!</p></div></div>' +
       '<div class="language-picker" role="group" aria-label="Choose language">' +
@@ -96,7 +96,7 @@
     view.className = 'sheet home-view';
     view.innerHTML =
       '<div class="hero"><span class="hero-label">THE WAFFLE MENU</span>' +
-      '<h2><span class="elastic-title">' + esc(t('menu')) + '</span> <span class="hero-waffle" aria-hidden="true">✦</span></h2>' +
+      '<h2>' + esc(t('menu')) + ' <span class="hero-waffle" aria-hidden="true">✦</span></h2>' +
       '<p>' + esc(state.lang === 'zh' ? '香脆、甜蜜，现点现做' : state.lang === 'ms' ?
         'Rangup, manis dan dibuat segar' : 'Crispy, sweet, made fresh') + '</p></div>' +
       '<label class="search-wrap"><span aria-hidden="true">⌕</span><span class="sr-only">' +
@@ -236,10 +236,8 @@
     }
     const cat = event.target.closest('[data-cat]');
     if (cat) {
-      if (window.WiffyMotion) window.WiffyMotion.beforePageUpdate();
       state.category = cat.dataset.cat;
       renderHome();
-      if (window.WiffyMotion) window.WiffyMotion.page();
       return;
     }
     const product = event.target.closest('[data-product]');
@@ -256,7 +254,6 @@
       paintMix();
       const current = modal.querySelector('[data-flavour="' + previously + '"]');
       if (current) current.focus();
-      if (window.WiffyMotion) window.WiffyMotion.mixPicked();
       return;
     }
     if (event.target.closest('[data-close]')) closeSheet();
