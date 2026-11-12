@@ -68,7 +68,7 @@
     const tag = item[2] === 'top' ? t('top') : item[2] === 'seoul' ? t('seoul') : t('classic');
     return '<button type="button" class="product-card" data-product="' + esc(id) + '" aria-label="' +
       esc(itemName(item) + ', ' + money(item[3])) + '">' +
-      '<span class="product-art art-' + esc(item[2]) + '" aria-hidden="true"><span>🧇</span></span>' +
+      '<span class="product-art art-' + esc(item[2]) + '"><img src="assets/products/' + esc(id) + '.webp" alt="" loading="lazy" decoding="async" width="640" height="640"></span>' +
       '<span class="product-copy"><span class="product-tag">' + esc(tag) + '</span>' +
       '<strong>' + esc(itemName(item)) + '</strong>' +
       '<span class="product-description">' + esc(itemDesc(item)) + '</span>' +
@@ -186,7 +186,7 @@
     if (state.sheet.kind === 'mixer') { paintMix(); return; }
     const item = state.sheet.item;
     const cat = item[2] === 'top' ? t('top') : item[2] === 'seoul' ? t('seoul') : t('classic');
-    sheetFrame('<div class="detail-illustration" aria-hidden="true">🧇</div>' +
+    sheetFrame('<div class="detail-illustration"><img src="assets/products/' + esc(item[0]) + '.webp" alt="" loading="eager" decoding="async" width="640" height="640"></div>' +
       '<span class="product-tag">' + esc(cat) + '</span><h2 id="sheet-title">' +
       esc(itemName(item)) + '</h2><p class="sheet-desc">' + esc(itemDesc(item)) + '</p>' +
       '<div class="detail-price">' + esc(money(item[3])) + '</div>' +
@@ -200,6 +200,7 @@
     const bg = 'linear-gradient(90deg,' + a + ' 0%,' + a + ' 50%,' + b + ' 50%,' + b + ' 100%)';
     const chosenNames = state.picks.map(i => FLAVOURS[i][state.lang === 'zh' ? 2 : state.lang === 'ms' ? 3 : 1]);
     sheetFrame('<h2 id="sheet-title">' + esc(t('mix')) + '</h2>' +
+      '<div class="classic-reference"><img src="assets/products/classic-mix.webp" alt="" loading="eager" decoding="async" width="640" height="640"><img src="assets/products/classic-mix-alternate.webp" alt="" loading="lazy" decoding="async" width="640" height="640"></div>' +
       '<p class="sheet-desc">' + esc(state.lang === 'zh' ? '可重复选择，第三次点击会替换最早的口味。' :
       state.lang === 'ms' ? 'Boleh pilih perisa sama; pilihan ketiga menggantikan yang pertama.' :
       'Duplicates welcome. Your third pick replaces the oldest.') + '</p>' +
