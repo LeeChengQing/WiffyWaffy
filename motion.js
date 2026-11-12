@@ -160,13 +160,19 @@
   function interactiveTarget(event) {
     return event.target instanceof Element ? event.target.closest('button:not(:disabled),a.chip') : null;
   }
+  const pressed = new Map();
   function squish(event) {
     if (reducedMotion.matches) return;
     const button = interactiveTarget(event);
-    if (button) button.classList.add('is-squished');
+    if (!button) return;
+    button.classList.add('is-squished');
+    if (typeof event.pointerId === 'number') pressed.set(event.pointerId, button);
   }
   function springBack(event) {
-    const button = interactiveTarget(event);
+    // Keep the original button responsive even if a finger slides outside it.
+    const button = (typeof event.pointerId === 'number' && pressed.get(event.pointerId)) ||
+      interactiveTarget(event);
+    if (typeof event.pointerId === 'number') pressed.delete(event.pointerId);
     if (!button) return;
     button.classList.remove('is-squished');
     if (reducedMotion.matches) return;
