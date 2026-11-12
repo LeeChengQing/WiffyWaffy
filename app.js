@@ -96,7 +96,7 @@
     view.className = 'sheet home-view';
     view.innerHTML =
       '<div class="hero"><span class="hero-label">THE WAFFLE MENU</span>' +
-      '<h2>' + esc(t('menu')) + ' <span class="hero-waffle" aria-hidden="true">✦</span></h2>' +
+      '<h2><span class="elastic-title">' + esc(t('menu')) + '</span> <span class="hero-waffle" aria-hidden="true">✦</span></h2>' +
       '<p>' + esc(state.lang === 'zh' ? '香脆、甜蜜，现点现做' : state.lang === 'ms' ?
         'Rangup, manis dan dibuat segar' : 'Crispy, sweet, made fresh') + '</p></div>' +
       '<label class="search-wrap"><span aria-hidden="true">⌕</span><span class="sr-only">' +
@@ -135,10 +135,12 @@
   }
 
   function render() {
+    if (window.WiffyMotion) window.WiffyMotion.beforePageUpdate();
     renderTop();
     renderNav();
     if (state.tab === 'home') renderHome(); else renderInfo();
     renderSheet();
+    if (window.WiffyMotion) window.WiffyMotion.page();
   }
 
   function openSheet(kind, item) {
@@ -150,16 +152,22 @@
     document.querySelector('.phone').inert = true;
     const close = modal.querySelector('.close-sheet');
     if (close) close.focus();
+    if (window.WiffyMotion) window.WiffyMotion.sheetOpen();
   }
 
-  function closeSheet() {
-    if (!state.sheet) return;
+  function finishCloseSheet() {
     state.sheet = null;
     modal.innerHTML = '';
     document.body.classList.remove('modal-open');
     document.querySelector('.phone').inert = false;
     if (previouslyFocused && previouslyFocused.isConnected) previouslyFocused.focus();
     previouslyFocused = null;
+  }
+
+  function closeSheet() {
+    if (!state.sheet) return;
+    if (window.WiffyMotion) window.WiffyMotion.sheetClose(finishCloseSheet);
+    else finishCloseSheet();
   }
 
   function openDetail(item) { openSheet('detail', item); }
@@ -228,8 +236,10 @@
     }
     const cat = event.target.closest('[data-cat]');
     if (cat) {
+      if (window.WiffyMotion) window.WiffyMotion.beforePageUpdate();
       state.category = cat.dataset.cat;
       renderHome();
+      if (window.WiffyMotion) window.WiffyMotion.page();
       return;
     }
     const product = event.target.closest('[data-product]');
@@ -246,6 +256,7 @@
       paintMix();
       const current = modal.querySelector('[data-flavour="' + previously + '"]');
       if (current) current.focus();
+      if (window.WiffyMotion) window.WiffyMotion.mixPicked();
       return;
     }
     if (event.target.closest('[data-close]')) closeSheet();
