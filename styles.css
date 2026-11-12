@@ -3,6 +3,17 @@
 :root[data-theme="dark"]{--page:#1b1b1b}
 *{box-sizing:border-box;margin:0}
 body{background:var(--page);font-family:Fredoka,"Trebuchet MS",sans-serif;color:var(--ink)}
+@font-face {
+  font-family: "Wiffy Chinese";
+  src: local("萌趣动物"), local("字魂萌趣软糖体"), local("字魂64号-萌趣软糖体"),
+       local("zihun64hao-mengquruantangti"), local("zihun64hao-mengquruantangti-Regular");
+  font-weight: 400 700;
+  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+:root[lang="zh-CN"] body,
+:root[lang="zh-CN"] .search input {
+  font-family: "Wiffy Chinese", Fredoka, "Trebuchet MS", sans-serif;
+}
 .app{max-width:430px;min-height:100dvh;margin:0 auto;background:var(--bg);padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 button{font-family:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--sky);outline-offset:2px}
@@ -62,6 +73,25 @@ body.modal-open { overflow:hidden; }
 #modal .allergen { font-size:12px; }
 #modal a { display:block; width:fit-content; margin-top:6px; overflow-wrap:anywhere; }
 #modal a.chip { display:inline-grid; place-items:center; text-decoration:none; }
+#modal .location-sheet h3 { color:var(--ink); font-size:26px; }
+.location-map {
+  position:relative; height:clamp(156px, 31vh, 224px); margin-top:14px;
+  border:2px solid var(--ink); border-radius:16px; overflow:hidden; background:#e6eee7;
+}
+.location-map iframe { display:block; width:100%; height:100%; border:0; pointer-events:none; }
+#modal .location-map-link { position:absolute; inset:0; width:100%; margin:0; }
+.location-map-link:focus-visible { outline:3px solid var(--blue); outline-offset:-4px; }
+.location-address { margin:13px 0 16px; }
+.location-address strong { font-size:17px; }
+#modal .location-address p { margin-top:3px; }
+#modal .location-directions {
+  display:flex; width:100%; min-height:49px; margin:0; padding:8px 12px;
+  align-items:center; justify-content:center; gap:8px; border:2px solid var(--ink);
+  border-radius:13px; background:var(--blue); color:var(--bg); box-shadow:3px 3px var(--ink);
+  text-decoration:none; font-weight:700; touch-action:manipulation;
+  transition:transform .13s ease, box-shadow .13s ease;
+}
+#modal .location-directions:active { transform:translate(2px, 2px); box-shadow:1px 1px var(--ink); }
 .big { width:150px; height:150px; margin:0 auto 6px; }
 .big svg { width:80%; height:80%; }
 #modal .mix-selection { min-height:24px; text-align:center; font-weight:700; color:var(--blue); }

@@ -24,7 +24,12 @@ const FLAVOURS = [
   ['#E2B93B', 'Kaya', '咖椰', 'Kaya'],
 ];
 
-const SHOP = { address: '', hours: '', phone: '', maps: '', socials: [] };
+const SHOP = {
+  landmark: 'Taman Gaya 石家庄',
+  street: '39 Jalan Gaya 27',
+  locality: '81800 Johor Bahru, Johor, Malaysia',
+  coordinates: '1.5675187,103.8018698'
+};
 
 const I18N = {
   en: {
@@ -36,7 +41,8 @@ const I18N = {
     search: 'Find waffles…',
     none: 'No waffles found',
     soon: 'Details coming soon',
-    dir: 'Directions',
+    dir: 'Get directions',
+    map: 'Map of the shop location',
     home: 'Home',
     info: 'Info',
     allergens: 'Allergens',
@@ -61,7 +67,8 @@ const I18N = {
     search: '搜索华夫饼…',
     none: '找不到华夫饼',
     soon: '详情即将公布',
-    dir: '路线',
+    dir: '开始导航',
+    map: '店铺位置地图',
     home: '首页',
     info: '信息',
     allergens: '过敏原',
@@ -86,7 +93,8 @@ const I18N = {
     search: 'Cari wafel…',
     none: 'Tiada wafel dijumpai',
     soon: 'Butiran akan datang',
-    dir: 'Arah',
+    dir: 'Mula navigasi',
+    map: 'Peta lokasi kedai',
     home: 'Utama',
     info: 'Info',
     allergens: 'Alergen',

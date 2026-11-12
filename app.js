@@ -37,13 +37,6 @@
   function money(amount) { return 'RM ' + Number(amount).toFixed(2); }
   function itemName(item) { return item[1]; }
   function itemDesc(item) { return item[state.lang === 'zh' ? 5 : state.lang === 'ms' ? 6 : 4]; }
-  function safeUrl(value) {
-    try {
-      const url = new URL(value, window.location.href);
-      return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
-    } catch (_) { return ''; }
-  }
-
   function paintLang() {
     document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : state.lang;
     document.querySelectorAll('[data-lang]').forEach(button => {
@@ -85,21 +78,24 @@
   }
 
   function infoHtml() {
-    const content = [];
-    if (SHOP.address) content.push('<p>📍 ' + esc(SHOP.address) + '</p>');
-    if (SHOP.hours) content.push('<p>🕒 ' + esc(SHOP.hours) + '</p>');
-    if (SHOP.phone) content.push('<a href="tel:' + esc(String(SHOP.phone).replace(/[^+0-9]/g,'')) +
-      '">📞 ' + esc(SHOP.phone) + '</a>');
-    if (SHOP.maps && safeUrl(SHOP.maps)) content.push('<a class="chip" target="_blank" rel="noopener" href="' +
-      esc(safeUrl(SHOP.maps)) + '">' + esc(t('dir')) + '</a>');
-    if (Array.isArray(SHOP.socials)) SHOP.socials.forEach(social => {
-      const name = social.name || social[0];
-      const url = safeUrl(social.url || social[1]);
-      if (name && url) content.push('<a target="_blank" rel="noopener noreferrer" href="' +
-        esc(url) + '">' + esc(name) + '</a>');
-    });
-    return '<h3 id="sheet-title">Wiffy Waffy</h3>' +
-      (content.length ? content.join('') : '<p>' + esc(t('soon')) + '</p>');
+    const coordinates = encodeURIComponent(SHOP.coordinates);
+    const map = `https://www.google.com/maps?q=${coordinates}&z=17&output=embed`;
+    const directions = `https://www.google.com/maps/dir/?api=1&destination=${coordinates}&travelmode=driving&dir_action=navigate`;
+    return `<div class="location-sheet">
+      <h3 id="sheet-title">Wiffy Waffy</h3>
+      <div class="location-map">
+        <iframe src="${esc(map)}" title="${esc(t('map'))}" tabindex="-1"></iframe>
+        <a class="location-map-link" href="${esc(directions)}" target="_blank" rel="noopener" aria-label="${esc(t('dir'))}: Wiffy Waffy"></a>
+      </div>
+      <div class="location-address">
+        <strong>${esc(SHOP.landmark)}</strong>
+        <p>${esc(SHOP.street)}<br>${esc(SHOP.locality)}</p>
+      </div>
+      <a class="location-directions" href="${esc(directions)}" target="_blank" rel="noopener">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m21 3-6.5 18-3.6-7.9L3 9.5 21 3Z"/></svg>
+        ${esc(t('dir'))}
+      </a>
+    </div>`;
   }
 
   function render() {
