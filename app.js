@@ -49,7 +49,7 @@
       '<div class="language-picker" role="group" aria-label="Choose language">' +
       [['en','EN'], ['zh','中'], ['ms','BM']].map(([code,label]) =>
         '<button type="button" class="lang-option ' + (state.lang === code ? 'active' : '') +
-        '" data-lang="' + code + '" aria-pressed="' + (state.lang === code) + '">' + label + '</button>'
+        '" data-lang="' + code + '" aria-pressed="' + (state.lang === code) + '"><span class="lang-label">' + label + '</span></button>'
       ).join('') + '</div>';
     document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : state.lang === 'ms' ? 'ms' : 'en';
   }
