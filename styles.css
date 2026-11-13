@@ -1,18 +1,13 @@
+@import url("assets/fonts/zcool-kuaile/font.css");
+
 :root{--bg:#FFFDF2;--blue:#0057A8;--sky:#5B9BD5;--red:#C0392B;--ink:#0A2540;--muted:#4A6178;--soft:#FFF1D0;--page:#e9e6da}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#1b1b1b}}
 :root[data-theme="dark"]{--page:#1b1b1b}
 *{box-sizing:border-box;margin:0}
 body{background:var(--page);font-family:Fredoka,"Trebuchet MS",sans-serif;color:var(--ink)}
-@font-face {
-  font-family: "Wiffy Chinese";
-  src: local("萌趣动物"), local("字魂萌趣软糖体"), local("字魂64号-萌趣软糖体"),
-       local("zihun64hao-mengquruantangti"), local("zihun64hao-mengquruantangti-Regular");
-  font-weight: 400 700;
-  unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
-}
 :root[lang="zh-CN"] body,
 :root[lang="zh-CN"] .search input {
-  font-family: "Wiffy Chinese", Fredoka, "Trebuchet MS", sans-serif;
+  font-family: "ZCOOL KuaiLe", Fredoka, "Trebuchet MS", sans-serif;
 }
 .app{max-width:430px;min-height:100dvh;margin:0 auto;background:var(--bg);padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 button{font-family:inherit;color:inherit;cursor:pointer}

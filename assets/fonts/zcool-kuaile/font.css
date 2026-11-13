@@ -1,0 +1,136 @@
+/* Fontsource WOFF2 subsets covering the Chinese text used in the menu. */
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-46-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+7CEC;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-102-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+6930, U+7CEF;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-104-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+69B4, U+9165;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-106-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+8393;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-107-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+8106;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-108-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+9171;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-109-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+90C1, U+997C;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-110-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+5496, U+6D53, U+6D82, U+83B2;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-111-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+5E84, U+66FF, U+9EA6;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-112-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+4F0A, U+5976, U+94FA;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-113-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+575A, U+642D, U+654F, U+8349, U+83DC, U+86CB, U+9E21, U+9EBB;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-114-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+542B, U+5473, U+592B, U+5965, U+5C42, U+5DE7, U+65E9, U+6CB9, U+725B;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-115-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+514B, U+5178, U+5C14, U+5E72, U+76CA, U+77F3, U+8BE6, U+8F6F, U+95ED, U+9999, U+9EC4;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-116-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+5361, U+59CB, U+5E97, U+627E, U+62E9, U+6362, U+767D, U+822A, U+8FBE, U+914D, U+9ED1;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-117-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+4E24, U+4EFB, U+51FB, U+5229, U+534E, U+5355, U+5373, U+539F, U+53E3, U+590D, U+5BFC, U+5C06, U+5E03, U+641C, U+7531, U+79CD, U+7ACB, U+7B2C, U+7CBE, U+7D22, U+7F6E, U+82B1, U+9009, U+91CD;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-118-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+4E09, U+4E0D, U+4E0E, U+4F1A, U+4F4D, U+4FE1, U+5168, U+516C, U+5173, U+5230, U+529B, U+53EF, U+56FE, U+5730, U+591A, U+5BB6, U+5C0F, U+5F00, U+5FC3, U+606F, U+60C5, U+65F6, U+6700, U+679C, U+6B21, U+751F, U+7ECF, U+80FD, U+81EA, U+8BF7, U+8FC7, U+90E8, U+91D1, U+9875, U+9996;
+}
+
+@font-face {
+  font-family: "ZCOOL KuaiLe";
+  src: url("zcool-kuaile-119-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+3001, U+3002, U+4E2D, U+6709, U+70B9, U+7684, U+FF0C;
+}
